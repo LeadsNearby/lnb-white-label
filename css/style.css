@@ -1,0 +1,28 @@
+div.wrap{background:url(/wp-content/plugins/lnb-white-label/images/lnb_white_label_footer.png) no-repeat 0 0!important;padding-top:20px}
+#wpfooter #footer-left img{width:114px;height:24px}
+#adminmenu .wp-has-current-submenu .wp-submenu .wp-submenu-head, #adminmenu .wp-menu-arrow, #adminmenu .wp-menu-arrow div, #adminmenu li.current a.menu-top, #adminmenu li.wp-has-current-submenu a.wp-has-current-submenu, .folded #adminmenu li.current.menu-top, .folded #adminmenu li.wp-has-current-submenu {
+    background: #ffa409 none repeat scroll 0 0;
+    color: #fff;
+}
+#adminmenu li.menu-top:hover, #adminmenu li.opensub > a.menu-top, #adminmenu li > a.menu-top:focus {
+    background-color: #191e23;
+    color: #FFA409;
+    position: relative;
+}
+#adminmenu .wp-submenu a:focus, #adminmenu .wp-submenu a:hover, #adminmenu a:hover, #adminmenu li.menu-top > a:focus {
+    color: #FFA409;
+}
+#adminmenu li a:focus div.wp-menu-image::before, #adminmenu li.opensub div.wp-menu-image::before, #adminmenu li:hover div.wp-menu-image::before {
+    color: #FFA409;
+}
+#collapse-menu:hover, #collapse-menu:hover #collapse-button div::after {
+    color: #FFA409;
+}
+#adminmenu .awaiting-mod, #adminmenu .update-plugins {
+    background-color: #ffa409;
+    color: #333;
+}
+#adminmenu li a.wp-has-current-submenu .update-plugins, #adminmenu li.current a .awaiting-mod {
+    background-color: #333;
+    color: #fff;
+}	

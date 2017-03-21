@@ -1,0 +1,171 @@
+html{
+	background: #222;
+}
+body {
+    background: url(/wp-content/plugins/lnb-white-label/images/header_bg.png) no-repeat scroll center center #222 !important;
+    margin: 0 auto !important;
+    padding: 0;
+    position: relative !important;
+    width: 100% !important;
+    height: auto !important;
+	min-height:700px;
+}
+.section-one {
+    top: 270px;
+    position: absolute;
+    left: 190px;
+	-webkit-animation-duration: 3s;
+	-webkit-animation-delay: 1s;
+	-moz-animation-duration: 3s;
+	-moz-animation-delay: 1s;
+	animation-duration: 3s;
+	animation-delay: 1s;
+}
+.section-two {
+    top: 500px;
+    position: absolute;
+    right: 90px;
+	-webkit-animation-duration: 3s;
+	-webkit-animation-delay: 2s;
+	-moz-animation-duration: 3s;
+	-moz-animation-delay: 2s;	
+	animation-duration: 3s;
+	animation-delay: 2s;	
+}
+.section-three {
+    top: 210px;
+    position: absolute;
+    left: 500px;
+	-webkit-animation-duration: 3s;
+	-webkit-animation-delay: 3s;
+	-moz-animation-duration: 3s;
+	-moz-animation-delay: 3s;
+	animation-duration: 3s;
+	animation-delay: 3s;	
+}
+.section-four {
+    position: absolute;
+    top: 425px;
+    left: 252px;
+	-webkit-animation-duration: 3s;
+	-webkit-animation-delay: 4s;
+	-moz-animation-duration: 3s;
+	-moz-animation-delay: 4s;
+	animation-duration: 3s;
+	animation-delay: 4s;	
+}
+.section-five {
+    top: 150px;
+    position: absolute;
+    left: 70px;
+	-webkit-animation-duration: 3s;
+	-webkit-animation-delay: 5s;
+	-moz-animation-duration: 3s;
+	-moz-animation-delay: 5s;
+	animation-duration: 3s;
+	animation-delay: 5s;	
+}
+.section-six {
+	position: absolute;
+    left: 525px;
+    top: 480px;
+	-webkit-animation-duration: 3s;
+	-webkit-animation-delay: 6s;
+	-moz-animation-duration: 3s;
+	-moz-animation-delay: 6s;
+	animation-duration: 3s;
+	animation-delay: 6s;	
+}
+.section-seven {
+    position: absolute;
+    right: 210px;
+    top: 250px;
+	-webkit-animation-duration: 3s;
+	-webkit-animation-delay: 7s;
+	-moz-animation-duration: 3s;
+	-moz-animation-delay: 7s;
+	animation-duration: 3s;
+	animation-delay: 7s;	
+}
+.section-eight {
+    top: 150px;
+    position: absolute;
+    right: 0;
+	-webkit-animation-duration: 3s;
+	-webkit-animation-delay: 8s;
+	-moz-animation-duration: 3s;
+	-moz-animation-delay: 8s;
+	animation-duration: 3s;
+	animation-delay: 8s;	
+}
+.section-nine {
+    left: 300px;
+    top: 100px;
+    position: absolute;
+	-webkit-animation-duration: 3s;
+	-webkit-animation-delay: 9s;
+	-moz-animation-duration: 3s;
+	-moz-animation-delay: 9s;
+	animation-duration: 3s;
+	animation-delay: 9s;	
+}
+div#login{
+	font-family: sans-serif;
+	font-size: 12px;
+        line-height:1.4em;
+	width: 960px !important;
+	height: auto !important;
+	margin: 0 auto !important;
+	display: block !important;
+	position: relative !important;
+        background:url(/wp-content/plugins/lnb-white-label/images/lnb-logo.png) no-repeat 0 35px !important;
+}
+body.login{
+	background: 0 0;
+}
+.login h1{
+	display:block !important;
+	height: 250px !important;
+	background: url(/wp-content/plugins/lnb-white-label/images/loginh1bg.png) no-repeat 640px 40px !important;
+}
+.login h1 a{
+	display: none !important;
+}
+#login{
+	margin: 0 !important;
+	padding: 0 !important;
+}
+p.message{
+	width: 300px !important;
+	height: 25px !important;
+	margin: 0  auto !important;
+	padding: 0 !important;
+	background: none !important;
+	border: none !important;
+}
+.login label {
+    color: #f9f9f9;
+    font-size: 14px;
+}
+.login form, p#backtoblog, p#nav{
+    background:none;
+    margin: 0 auto !important;
+    width: 300px;
+    border-radius: 10px;
+}
+.wp-core-ui .button-primary{
+	background: #FFA409 !important;
+	border: none !important;
+	text-shadow: none;
+	color: #000;
+}
+.wp-core-ui .button-primary:focus,.wp-core-ui .button-primary:hover{
+	background: #e88f00 !important;
+	text-shadow: none;
+	color: #000;
+}
+#wpfooter #footer-left img{
+	height: 1.2em !important;
+	width: auto !important;
+	margin-right:0.5em !important;
+}
