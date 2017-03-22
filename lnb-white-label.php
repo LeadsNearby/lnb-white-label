@@ -90,39 +90,40 @@ class LNB_White_Label {
 			'read_private_posts' => true,
 			'unfiltered_html' => true,
 			'upload_files' => true,
-			// 'install_plugins' => false,				
-			// 'install_themes' => false,				
-			// 'list_users' => false, 				
-			// 'manage_options' => false, 				
-			// 'promote_users' => false, 				
-			// 'remove_users' => false, 				
-			// 'switch_themes' => false, 								 				
-			// 'update_themes' => false,				
-			// 'edit_dashboard' => false,
-			// 'edit_themes' => false,
-			// 'update_plugin' => false,
-			// 'update_core' => false,
-			// 'activate_plugins' => false,				
-			// 'create_users' => false,				
-			// 'delete_plugins' => false,				
-			// 'delete_themes' => false,				
-			// 'delete_users' => false,				
-			// 'edit_files' => false,				
-			// 'edit_plugins' => false,				
-			// 'edit_theme_options' => false,							
-			// 'edit_users' => false,				
-			// 'export' => false,				
-			// 'import' => false,
-			'level_3' => true,   
+			'install_plugins' => false,				
+			'install_themes' => false,				
+			'list_users' => false, 				
+			'manage_options' => false, 				
+			'promote_users' => false, 				
+			'remove_users' => false, 				
+			'switch_themes' => false, 								 				
+			'update_themes' => false,				
+			'edit_dashboard' => false,
+			'edit_themes' => false,
+			'update_plugin' => false,
+			'update_core' => false,
+			'activate_plugins' => false,				
+			'create_users' => false,				
+			'delete_plugins' => false,				
+			'delete_themes' => false,				
+			'delete_users' => false,				
+			'edit_files' => false,				
+			'edit_plugins' => false,				
+			'edit_theme_options' => false,							
+			'edit_users' => false,				
+			'export' => false,				
+			'import' => false,  
 			);
 
-		$lnb_role = $this->wp_roles->is_role( 'lnb_client' );
+		$lnb_role = $this->wp_roles->get_role( 'lnb_client' );
 
 		if( !$lnb_role ) {
 			add_role( 'lnb_client', __( 'LeadsNearby Client' ), $permissions );
 		}
 		else {
-			$lnb_role->add_cap( 'level_3' );
+			foreach( $permissions as $perm => $grant ) {
+				$lnb_role->add_cap( $perm, '', $grant);
+			}
 		}
 
 		// Removes old LNB Admin Role
