@@ -15,9 +15,7 @@ class LNB_White_Label {
 
 		$this->wp_roles = $roles;
 
-		add_action( 'admin_enqueue_scripts', array( $this, 'init_admin_styles' ) );
 		add_action( 'login_enqueue_scripts', array( $this, 'init_login_styles' ) );
-
 		add_action( 'login_enqueue_scripts', array( $this, 'init_login_scripts' ), 0);
 		add_action( 'login_head', array( $this, 'init_login_head' ) );
 
@@ -41,7 +39,7 @@ class LNB_White_Label {
 	}
 
 	function init_login_styles() {
-		wp_register_style( 'lnb-white-label-animate', plugins_url( '/css/animate.css', __FILE__ ) );
+		wp_register_style( 'lnb-white-label-animate', plugins_url( '/css/animate.min.css', __FILE__ ) );
 		wp_register_style( 'lnb-white-label-login', plugins_url( '/css/login-style.css', __FILE__ ) );
 		wp_enqueue_style( 'lnb-white-label-animate' );
 		wp_enqueue_style( 'lnb-white-label-login' );
@@ -118,7 +116,7 @@ class LNB_White_Label {
 			'level_3' => true,   
 			);
 
-		$lnb_role = $this->wp_roles->get_role( 'lnb_client' );
+		$lnb_role = $this->wp_roles->is_role( 'lnb_client' );
 
 		if( !$lnb_role ) {
 			add_role( 'lnb_client', __( 'LeadsNearby Client' ), $permissions );
@@ -143,6 +141,14 @@ class LNB_White_Label {
 	function admin_init() {
 		require_once( plugin_dir_path( __FILE__ ) .'/lib/updater/github-updater.php' );
 		new GitHubPluginUpdater( __FILE__, 'LeadsNearby', 'lnb-white-label' );
+
+		add_action( 'admin_enqueue_scripts', array( $this, 'init_admin_styles' ) );
+		add_filter('admin_footer_text', array( $this, 'add_footer_text' ) );
+	}
+
+	function add_footer_text() {
+		echo '<a href="http://www.leadsnearby.com/" target="_blank" title="LeadsNearby Local SEO and Web Design"><img src="' . plugins_url( 'images/lnb_white_label_footer.png' , __FILE__ ) . '"></a>';
+		echo '<span id="footer-thankyou">Developed by <a href="http://www.leadsnearby.com" target="_blank">LeadsNearby</a></span> | <a href="http://www.leadsnearby.com" target="_blank">Contact Us</a></span> | Call Us: <a href="http://www.leadsnearby.com" target="_blank">919-758-8420</a></span>';
 	}
 
 	// Removes WP Logo from Dashboard
@@ -204,11 +210,4 @@ $wp_roles = new WP_Roles();
 
 new LNB_White_Label( $wp_roles );
 
-	// Replaces text on WP Admin Dashboard
-	function remove_footer_admin ()
-	{
-		echo '<a href="http://www.leadsnearby.com/" target="_blank" title="LeadsNearby Local SEO and Web Design"><img src="' . plugins_url( 'images/lnb_white_label_footer.png' , __FILE__ ) . '"></a>';
-		echo '<span id="footer-thankyou">Developed by <a href="http://www.leadsnearby.com" target="_blank">LeadsNearby</a></span> | <a href="http://www.leadsnearby.com" target="_blank">Contact Us</a></span> | Call Us: <a href="http://www.leadsnearby.com" target="_blank">919-758-8420</a></span>';
-	}
-	add_filter('admin_footer_text', 'remove_footer_admin');
 ?>
