@@ -3,7 +3,7 @@
 Plugin Name: LeadsNearby White Label
 Plugin URI: http://www.leadsnearby.com
 Description: Brands the Wordpress Backend for LeadsNearby
-Version: 2.1.0
+Version: 2.1.5
 Author: LeadsNearby
 Author URI: http://www.leadsnearby.com
 License: GPLv3
@@ -11,11 +11,7 @@ License: GPLv3
 
 class LNB_White_Label {
 
-	public $wp_roles;
-
-	public function __construct( $roles ) {
-
-		$this->wp_roles = $roles;
+	public function __construct() {
 
 		add_action( 'login_enqueue_scripts', array( $this, 'init_login_styles' ) );
 		add_action( 'login_enqueue_scripts', array( $this, 'init_login_scripts' ), 0);
@@ -62,7 +58,7 @@ class LNB_White_Label {
 		</script>
 	<?php }
 
-	public function add_user_role() {
+	public static function add_user_role() {
 		$permissions = array(
 			'delete_others_pages' => true,
 			'delete_others_posts' => true,
@@ -114,27 +110,30 @@ class LNB_White_Label {
 			'export' => false,				
 			'import' => false,  
 			);
+		$wp_roles = new WP_Roles();
 
-		$lnb_role = $this->wp_roles->get_role( 'lnb_client' );
+		$lnb_role = $wp_roles->get_role( 'lnb_client' );
 
-		if( !$lnb_role ) {
+		if( ! $lnb_role ) {
 			add_role( 'lnb_client', __( 'LeadsNearby Client' ), $permissions );
 		}
 		else {
-			$this->wp_roles->remove_role( 'lnb_client' );
+			$wp_roles->remove_role( 'lnb_client' );
 			add_role( 'lnb_client', __( 'LeadsNearby Client' ), $permissions );
 		}
 
 		// Removes old LNB Admin Role
-		$this->wp_roles->remove_role( 'admin' );
-		$this->wp_roles->remove_role( 'client' );
+		$wp_roles->remove_role( 'admin' );
+		$wp_roles->remove_role( 'client' );
 	}
 
-	public function remove_user_role() {
+	public static function remove_user_role() {
 
-		$this->wp_roles->remove_role( 'lnb_client' );
-		$this->wp_roles->remove_role( 'admin' );
-		$this->wp_roles->remove_role( 'client' );
+		$wp_roles = new WP_Roles();
+
+		$wp_roles->remove_role( 'lnb_client' );
+		$wp_roles->remove_role( 'admin' );
+		$wp_roles->remove_role( 'client' );
 
 	}
 
@@ -206,11 +205,9 @@ class LNB_White_Label {
 
 }
 
-$wp_roles = new WP_Roles();
+$white_label = new LNB_White_Label();
 
-$white_label = new LNB_White_Label( $wp_roles );
-
-register_activation_hook( __FILE__, array( $white_label, 'add_user_role' ) );
-register_uninstall_hook( __FILE__, array( $white_label, 'remove_user_role' ) );
+register_activation_hook( __FILE__, array( 'LNB_White_Label', 'add_user_role' ) );
+register_uninstall_hook( __FILE__, array( 'LNB_White_Label', 'remove_user_role' ) );
 
 ?>
