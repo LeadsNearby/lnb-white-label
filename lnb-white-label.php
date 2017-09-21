@@ -3,11 +3,13 @@
 Plugin Name: LeadsNearby White Label
 Plugin URI: http://www.leadsnearby.com
 Description: Brands the Wordpress Backend for LeadsNearby
-Version: 2.1.5
+Version: 2.2.0
 Author: LeadsNearby
 Author URI: http://www.leadsnearby.com
 License: GPLv3
 */
+
+include 'recaptcha/lnb_recaptcha.php';
 
 class LNB_White_Label {
 
