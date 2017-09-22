@@ -3,7 +3,7 @@
 Plugin Name: LeadsNearby White Label
 Plugin URI: http://www.leadsnearby.com
 Description: Brands the Wordpress Backend for LeadsNearby
-Version: 2.2.0
+Version: 2.2.1
 Author: LeadsNearby
 Author URI: http://www.leadsnearby.com
 License: GPLv3
@@ -140,7 +140,7 @@ class LNB_White_Label {
 	}
 
 	function admin_init() {
-		require_once( plugin_dir_path( __FILE__ ) .'/lib/updater/github-updater.php' );
+		require_once( plugin_dir_path( __FILE__ ) .'/updater/github-updater.php' );
 		new GitHubPluginUpdater( __FILE__, 'LeadsNearby', 'lnb-white-label' );
 
 		add_action( 'admin_enqueue_scripts', array( $this, 'init_admin_styles' ) );
