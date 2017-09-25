@@ -3,7 +3,7 @@
 Plugin Name: LeadsNearby White Label
 Plugin URI: http://www.leadsnearby.com
 Description: Brands the Wordpress Backend for LeadsNearby
-Version: 2.2.1
+Version: 2.2.3
 Author: LeadsNearby
 Author URI: http://www.leadsnearby.com
 License: GPLv3
