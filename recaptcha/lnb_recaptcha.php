@@ -1,86 +1,92 @@
 <?php
 
+class lnbRecaptcha {
 
-/*** WP Hooks For Login and New User ***/
- 
-add_action( 'login_head', 'captcha_include' );
-add_action( 'login_form', 'captcha_form' );
-add_filter( 'wp_authenticate_user', 'verify_captcha' );
-add_action( 'register_form', 'captcha_form' );
-add_action( 'register_post', 'verify_captcha' );
-
-
-
+    public function __construct() {
+        add_action( 'login_head', array( $this, 'captcha_include') );
+        add_action( 'login_form', array( $this, 'captcha_form' ) );
+        add_filter( 'wp_authenticate_user', array( $this, 'verify_captcha' ) );
+        add_action( 'register_form', array( $this, 'captcha_form' ) );
+        add_action( 'register_post', array( $this, 'verify_captcha' ) );
+        add_action( 'lostpassword_form', array( $this, 'captcha_form' ) );
+        add_action( 'lostpassword_post', array( $this, 'verify_captcha_lost_password' ) );
+        
+    }
 
 /*** Include Captcha JS ***/
 
-function captcha_include() {
-
-    ?>
+    public function captcha_include() {
+        
+        ?>
     
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+        <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     
-    <?php
+        <?php
     
-}
-
-
+    }
 
 /*** Call Captcha Visual ***/
 
-function captcha_form() {
+    public function captcha_form() {
+        $google_site_key = get_option("captcha_site_key");
+        if ($google_site_key == "default" ) {
+            ?> <div class="g-recaptcha" data-sitekey="6Lf-UTEUAAAAADSMzp-1i0jhKMSfaLQ97E1wy9sX"  data-callback="recaptcha_callback"></div> <?php
+        } else {
+            ?> <div class="g-recaptcha" data-sitekey="<?php echo $google_site_key ?>"  data-callback="recaptcha_callback"></div> <?php
+        }   
     
-    ?>
+        ?>
         
-    <div class="g-recaptcha" data-sitekey="6Lf-UTEUAAAAADSMzp-1i0jhKMSfaLQ97E1wy9sX" data-callback="recaptcha_callback"></div>';
+       // <div class="g-recaptcha" data-sitekey="<?php echo $google_site_key ?>"  data-callback="recaptcha_callback"></div>';
     
-    <?php
-}
-
-
+        <?php
+        
+    }
 
 /*** Verify Captcha Response, Compare Against Allowed Domains ***/
 
-function verify_captcha( $parameter = true ) {
+    public function verify_captcha( $parameter = true ) {
+        
+    $google_secret = get_option("captcha_api_key");
     
-    if( isset( $_POST['g-recaptcha-response'] )   ) {
-        
-        $response = json_decode(wp_remote_retrieve_body( wp_remote_get( "https://www.google.com/recaptcha/api/siteverify?secret=6Lf-UTEUAAAAAEF2ED7YZNR4Y82AmFwjF5SCsqUb&response=" . $_POST['g-recaptcha-response'] ) ), true );
-        
-        $domain_file = file_get_contents("https://lnbdev.com/other/domain-list-38dcjk32982j3f04jkg3203j48fg.txt");
-        $domain_array = explode( "\n", $domain_file );
-        $domain_array = array_filter(array_map('trim', $domain_array));
-        $hostname = preg_replace('/^www\./', '', $response["hostname"]);
-
-        if( $response["success"] and in_array($hostname, $domain_array)  ) {
+        if( isset( $_POST['g-recaptcha-response'] )   ) {
+            if ($google_secret == "default") {
+                $response = json_decode(wp_remote_retrieve_body( wp_remote_get( "https://www.google.com/recaptcha/api/siteverify?secret=6Lf-UTEUAAAAAEF2ED7YZNR4Y82AmFwjF5SCsqUb&response=" . $_POST['g-recaptcha-response'] ) ), true );
+            } else {
+                $response = json_decode(wp_remote_retrieve_body( wp_remote_get( "https://www.google.com/recaptcha/api/siteverify?secret='.$google_secret.'&response=" . $_POST['g-recaptcha-response'] ) ), true );
+            }
             
-            return $parameter;
+            $domains = file_get_contents('https://lnbdev.com/clients/?apikey=dad9547e-c01e-46ee-b177-bffbc54ed3f2');
+            $domain_array = json_decode($domains, TRUE);
+            $domain_array = array_filter(array_map('trim', $domain_array["domains"]));
+            $hostname = preg_replace('/^www\./', '', $response["hostname"]);
+    
+            if( $response["success"] && in_array($hostname, $domain_array )) {
+                
+                return $parameter;
             
+            } else {
             
-        } else {
-        
-            //mail( "brian@leadsnearby.com","Test", $domain_array[125] );
-            header('Location: ' . site_url() . '/wp-admin/');
-            die();
+                //mail( "brian@leadsnearby.com","Test", $output );
+                header('Location: ' . site_url() . '/wp-admin/');
+                die();
+            }
         }
+
+        return false;
+        
     }
-
-    return false;
-}
-
 
 
 /*** Additional Code for Lost Password Form ***/
 
-add_action( 'lostpassword_form', 'captcha_form' );
-add_action( 'lostpassword_post', 'verify_captcha_lost_password' );
-
-function verify_captcha_lost_password( ) {
+    public function verify_captcha_lost_password( ) {
     
-    if( !verify_captcha() ) {
+        if( !verify_captcha() ) {
         
-    add_filter('allow_password_reset', '__return_false');
+        add_filter('allow_password_reset', '__return_false');
     
+        }
     }
 }
 
