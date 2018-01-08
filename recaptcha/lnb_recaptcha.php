@@ -36,8 +36,6 @@ class lnbRecaptcha {
         }   
     
         ?>
-        
-       // <div class="g-recaptcha" data-sitekey="<?php echo $google_site_key ?>"  data-callback="recaptcha_callback"></div>';
     
         <?php
         
