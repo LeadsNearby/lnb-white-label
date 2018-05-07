@@ -12,17 +12,23 @@ License: GPLv3
 require 'recaptcha/lnb_recaptcha.php';
 require 'recaptcha/menu_page.php';
 
+add_filter( 'login_headerurl', 'custom_loginlogo_url' );
+function custom_loginlogo_url($url) {
+    return 'https://www.leadsnearby.com/';
+}
 
 class LNB_White_Label {
 
 	public function __construct() {
 
-		add_action( 'login_enqueue_scripts', array( $this, 'init_login_styles' ) );
+		add_action( 'login_enqueue_scripts', array( $this, 'init_login_styles' ), 99 );
 		add_action( 'login_enqueue_scripts', array( $this, 'init_login_scripts' ), 0);
 		add_action( 'login_head', array( $this, 'init_login_head' ) );
 
 		add_action( 'wp_before_admin_bar_render', array( $this, 'remove_admin_bar_links' ) );
-		add_action( 'admin_bar_menu', array( $this, 'add_admin_bar_links' ) ,25 );
+        add_action( 'admin_bar_menu', array( $this, 'add_admin_bar_links' ) ,25 );
+        
+        add_action( 'login_footer', [ $this, 'login_footer'] );
 
 		if( is_admin() ) {
 			$this->admin_init();
@@ -39,28 +45,51 @@ class LNB_White_Label {
 	}
 
 	function init_login_styles() {
-		wp_register_style( 'lnb-white-label-animate', plugins_url( '/css/animate.min.css', __FILE__ ) );
-		wp_register_style( 'lnb-white-label-login', plugins_url( '/css/login-style.css', __FILE__ ) );
-		wp_enqueue_style( 'lnb-white-label-animate' );
+        wp_register_style( 'lnb-white-label-login', plugins_url( 'assets/css/login-style.min.css', __FILE__ ) );
 		wp_enqueue_style( 'lnb-white-label-login' );
 	}
 
 	function init_login_scripts() {
-		wp_enqueue_script( 'jquery' );
-		wp_register_script( 'whitelabel-admin-commons', plugins_url( '/js/admin-commons.js',__FILE__ ),'','1.1', true );
-		wp_enqueue_script( 'whitelabel-admin-commons' );
 	}
 
-	function init_login_head() { ?>
-		<script type="text/javascript">
-			jQuery(document).ready(function($){
-				var num = ['one', 'two', 'three', 'four', 'five', 'six'];
-				for( i = 0; i < num.length; i++ ) {
-					$('#login').prepend('<div class="pin section-' + num[i] + ' animated bounceInDown"><img src="<?php echo plugins_url( '/images/lead-gen-white.png', __FILE__ ); ?>" /></div>');
-				}
-			});
-		</script>
-	<?php }
+    function init_login_head() { ?>
+        <style>
+            :root {
+                --logo: url('<?php echo plugins_url( 'assets/images/logo.svg', __FILE__ ); ?>');
+            }
+        </style>
+        <script>
+            (function(){
+                window.onload = () => {
+                    const form = document.querySelector('.login-wrapper')
+                    const logo = new Image()
+                    logo.src = '<?php echo plugins_url( 'assets/images/logo.svg', __FILE__ ); ?>'
+                    logo.onload = () => {
+                        form.classList.add('animate')
+                    }
+                }
+            })()
+        </script>
+    <?php }
+    
+    function login_footer() { ?>
+
+        <script>
+            const login = document.querySelector('#login')
+            const loginWrapper = document.createElement('div')
+            loginWrapper.classList.add('login-wrapper')
+            loginWrapper.appendChild(login)
+            const body = document.querySelector('body')
+            body.appendChild(loginWrapper)
+            const inputs = document.querySelectorAll('.input')
+            inputs.forEach(input => {
+                input.parentElement.parentElement.appendChild(input)
+            })
+            inputs[0].placeholder = 'Username/email'
+            inputs[1].placeholder = 'Password'
+        </script>
+
+    <? }
 
 	public static function add_user_role() {
 		$permissions = array(
