@@ -3,10 +3,9 @@
 Plugin Name: LeadsNearby White Label
 Plugin URI: http://www.leadsnearby.com
 Description: Brands the Wordpress Backend for LeadsNearby
-Version: 2.3.1
+Version: 3.0.0
 Author: LeadsNearby
 Author URI: http://www.leadsnearby.com
-License: GPLv3
 */
 
 require 'recaptcha/lnb_recaptcha.php';
@@ -38,10 +37,6 @@ class LNB_White_Label {
 	function init_admin_styles() {
 		wp_register_style( 'lnb-white-label', plugins_url( '/css/style.css', __FILE__ ) );
 		wp_enqueue_style( 'lnb-white-label' );
-
-		if ( !current_user_can( 'update_core' ) ) {
-			echo '<style>.update-nag, .updated { display: none; }</style>';
-		}
 	}
 
 	function init_login_styles() {
@@ -60,11 +55,11 @@ class LNB_White_Label {
         </style>
         <script>
             (function(){
-                window.onload = () => {
-                    const form = document.querySelector('.login-wrapper')
-                    const logo = new Image()
+                window.onload = function() {
+                    var form = document.querySelector('.login-wrapper')
+                    var logo = new Image()
                     logo.src = '<?php echo plugins_url( 'assets/images/logo.svg', __FILE__ ); ?>'
-                    logo.onload = () => {
+                    logo.onload = function() {
                         form.classList.add('animate')
                     }
                 }
@@ -75,16 +70,16 @@ class LNB_White_Label {
     function login_footer() { ?>
 
         <script>
-            const login = document.querySelector('#login')
-            const loginWrapper = document.createElement('div')
+            var login = document.querySelector('#login')
+            var loginWrapper = document.createElement('div')
             loginWrapper.classList.add('login-wrapper')
             loginWrapper.appendChild(login)
-            const body = document.querySelector('body')
+            var body = document.querySelector('body')
             body.appendChild(loginWrapper)
-            const inputs = document.querySelectorAll('.input')
-            inputs.forEach(input => {
-                input.parentElement.parentElement.appendChild(input)
-            })
+            var inputs = document.getElementsByClassName('input')
+			for(let i = 0; i < inputs.length; i++) {
+				inputs[i].parentElement.parentElement.appendChild(inputs[i])
+			}
             inputs[0].placeholder = 'Username/email'
             inputs[1].placeholder = 'Password'
         </script>
@@ -151,8 +146,9 @@ class LNB_White_Label {
 			add_role( 'lnb_client', __( 'LeadsNearby Client' ), $permissions );
 		}
 		else {
-			$wp_roles->remove_role( 'lnb_client' );
-			add_role( 'lnb_client', __( 'LeadsNearby Client' ), $permissions );
+			foreach( $permissions as $cap => $grant ) {
+				$lnb_role->add_cap( $cap, $grant );
+			}
 		}
 
 		// Removes old LNB Admin Role
