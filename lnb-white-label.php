@@ -8,6 +8,10 @@ Author: LeadsNearby
 Author URI: http://www.leadsnearby.com
 */
 
+require_once plugin_dir_path( __FILE__ ) . 'classes/class-dashboard.php';
+use lnb\Dashboard;
+$dashboard = Dashboard::get_instance( __FILE__ );
+
 require 'recaptcha/lnb_recaptcha.php';
 require 'recaptcha/menu_page.php';
 
@@ -35,7 +39,7 @@ class LNB_White_Label {
 	}
 
 	function init_admin_styles() {
-		wp_register_style( 'lnb-white-label', plugins_url( '/css/style.css', __FILE__ ) );
+		wp_register_style( 'lnb-white-label', plugins_url( 'assets/css/admin-style.css', __FILE__ ) );
 		wp_enqueue_style( 'lnb-white-label' );
 	}
 
