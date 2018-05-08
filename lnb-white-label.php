@@ -3,26 +3,31 @@
 Plugin Name: LeadsNearby White Label
 Plugin URI: http://www.leadsnearby.com
 Description: Brands the Wordpress Backend for LeadsNearby
-Version: 2.3.1
+Version: 3.0.0
 Author: LeadsNearby
 Author URI: http://www.leadsnearby.com
-License: GPLv3
 */
 
 require 'recaptcha/lnb_recaptcha.php';
 require 'recaptcha/menu_page.php';
 
+add_filter( 'login_headerurl', 'custom_loginlogo_url' );
+function custom_loginlogo_url($url) {
+    return 'https://www.leadsnearby.com/';
+}
 
 class LNB_White_Label {
 
 	public function __construct() {
 
-		add_action( 'login_enqueue_scripts', array( $this, 'init_login_styles' ) );
+		add_action( 'login_enqueue_scripts', array( $this, 'init_login_styles' ), 99 );
 		add_action( 'login_enqueue_scripts', array( $this, 'init_login_scripts' ), 0);
 		add_action( 'login_head', array( $this, 'init_login_head' ) );
 
 		add_action( 'wp_before_admin_bar_render', array( $this, 'remove_admin_bar_links' ) );
-		add_action( 'admin_bar_menu', array( $this, 'add_admin_bar_links' ) ,25 );
+        add_action( 'admin_bar_menu', array( $this, 'add_admin_bar_links' ) ,25 );
+        
+        add_action( 'login_footer', [ $this, 'login_footer'] );
 
 		if( is_admin() ) {
 			$this->admin_init();
@@ -32,35 +37,54 @@ class LNB_White_Label {
 	function init_admin_styles() {
 		wp_register_style( 'lnb-white-label', plugins_url( '/css/style.css', __FILE__ ) );
 		wp_enqueue_style( 'lnb-white-label' );
-
-		if ( !current_user_can( 'update_core' ) ) {
-			echo '<style>.update-nag, .updated { display: none; }</style>';
-		}
 	}
 
 	function init_login_styles() {
-		wp_register_style( 'lnb-white-label-animate', plugins_url( '/css/animate.min.css', __FILE__ ) );
-		wp_register_style( 'lnb-white-label-login', plugins_url( '/css/login-style.css', __FILE__ ) );
-		wp_enqueue_style( 'lnb-white-label-animate' );
+        wp_register_style( 'lnb-white-label-login', plugins_url( 'assets/css/login-style.min.css', __FILE__ ) );
 		wp_enqueue_style( 'lnb-white-label-login' );
 	}
 
 	function init_login_scripts() {
-		wp_enqueue_script( 'jquery' );
-		wp_register_script( 'whitelabel-admin-commons', plugins_url( '/js/admin-commons.js',__FILE__ ),'','1.1', true );
-		wp_enqueue_script( 'whitelabel-admin-commons' );
 	}
 
-	function init_login_head() { ?>
-		<script type="text/javascript">
-			jQuery(document).ready(function($){
-				var num = ['one', 'two', 'three', 'four', 'five', 'six'];
-				for( i = 0; i < num.length; i++ ) {
-					$('#login').prepend('<div class="pin section-' + num[i] + ' animated bounceInDown"><img src="<?php echo plugins_url( '/images/lead-gen-white.png', __FILE__ ); ?>" /></div>');
-				}
-			});
-		</script>
-	<?php }
+    function init_login_head() { ?>
+        <style>
+            :root {
+                --logo: url('<?php echo plugins_url( 'assets/images/logo.svg', __FILE__ ); ?>');
+            }
+        </style>
+        <script>
+            (function(){
+                window.onload = function() {
+                    var form = document.querySelector('.login-wrapper')
+                    var logo = new Image()
+                    logo.src = '<?php echo plugins_url( 'assets/images/logo.svg', __FILE__ ); ?>'
+                    logo.onload = function() {
+                        form.classList.add('animate')
+                    }
+                }
+            })()
+        </script>
+    <?php }
+    
+    function login_footer() { ?>
+
+        <script>
+            var login = document.querySelector('#login')
+            var loginWrapper = document.createElement('div')
+            loginWrapper.classList.add('login-wrapper')
+            loginWrapper.appendChild(login)
+            var body = document.querySelector('body')
+            body.appendChild(loginWrapper)
+            var inputs = document.getElementsByClassName('input')
+			for(let i = 0; i < inputs.length; i++) {
+				inputs[i].parentElement.parentElement.appendChild(inputs[i])
+			}
+            inputs[0].placeholder = 'Username/email'
+            inputs[1].placeholder = 'Password'
+        </script>
+
+    <? }
 
 	public static function add_user_role() {
 		$permissions = array(
@@ -122,8 +146,9 @@ class LNB_White_Label {
 			add_role( 'lnb_client', __( 'LeadsNearby Client' ), $permissions );
 		}
 		else {
-			$wp_roles->remove_role( 'lnb_client' );
-			add_role( 'lnb_client', __( 'LeadsNearby Client' ), $permissions );
+			foreach( $permissions as $cap => $grant ) {
+				$lnb_role->add_cap( $cap, $grant );
+			}
 		}
 
 		// Removes old LNB Admin Role
