@@ -60,7 +60,7 @@ class Dashboard {
             unset( $menu[$dashboard_key] );
         }
         if ( preg_match( '#wp-admin/?(index.php)?$#', $_SERVER['REQUEST_URI'] ) ) {
-            wp_redirect( site_url() . '/wp-admin/edit.php?post_type=page' );
+            wp_redirect( site_url() . '/wp-admin/admin.php?page=lnb-client-dashboard.php' );
         }
     }
 
