@@ -4,12 +4,11 @@
 }
 
 a {
-    transition: color 0.25s;
+    transition: color 0.15s linear;
 }
 
 a:hover {
-    color: #ffa400 !important;
-    color: var(--yellow) !important;
+    color: #006ada !important;
 }
 
 .login {
@@ -100,14 +99,14 @@ a:hover {
 
 .login form .input:focus,
 .login form .input:valid {
-    border-bottom: 2px solid #008ec2;
+    border-bottom: 2px solid #006ada;
 }
 
 .login form .input:focus ~ label,
 .login form .input:valid ~ label {
     top: 1px;
     font-size: 0.75em;
-    color: #008ec2;
+    color: #006ada;
 }
 
 .login form .forgetmenot, .login form .submit {
@@ -119,6 +118,7 @@ a:hover {
 }
 
 #wp-submit {
+    background-color: #006ada;
     float: none;
     text-transform: uppercase;
     padding: 1rem 2em;
