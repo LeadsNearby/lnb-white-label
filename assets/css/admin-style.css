@@ -4,6 +4,10 @@
     --lightest-gray: #efefef;
 }
 
+body {
+    font-family: Open Sans, Arial, Helvetica, sans-serif;
+}
+
 #wpwrap {
     background-color: #e5e5e5;
     background-color: var(--light-gray);

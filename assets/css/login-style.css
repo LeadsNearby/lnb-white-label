@@ -1,5 +1,4 @@
 :root {
-    --yellow: #ffa400;
     --light-gray: #e5e5e5;
     --lightest-gray: #efefef;
 }
@@ -24,10 +23,10 @@ a:hover {
     font-family: Open Sans, Arial, Helvetical, sans-serif;
 }
 
-.login label {
+/* .login label {
     display: none;
     color: #000;
-}
+} */
 
 .login-wrapper {
     display: none;
@@ -72,6 +71,45 @@ a:hover {
     box-shadow: none;
 }
 
+.login form > p {
+    position: relative;
+    font-size: 1rem;
+}
+
+.login form > p:not(.forgetmenot) > label {
+    position: absolute;
+    top: 0.85em;
+    left: 0.5em;
+    font-size: 1em;
+    cursor: auto;
+    user-select: none;
+    transition: all 0.1s linear;
+}
+
+.login form .input {
+    /* height: 45px; */
+    font-size: 1em;
+    padding: 1em 0.5em 0.5em 0.5em !important;
+    /* border-radius: 3px; */
+    border-top: none;
+    border-right: none;
+    border-left: none;
+    border-bottom: 2px solid #ccc;
+    box-shadow: none;
+}
+
+.login form .input:focus,
+.login form .input:valid {
+    border-bottom: 2px solid #008ec2;
+}
+
+.login form .input:focus ~ label,
+.login form .input:valid ~ label {
+    top: 1px;
+    font-size: 0.75em;
+    color: #008ec2;
+}
+
 .login form .forgetmenot, .login form .submit {
     float: none;
 }
@@ -80,21 +118,8 @@ a:hover {
     margin-bottom: 1rem !important;
 }
 
-.login form .forgetmenot label {
-    display: block;
-}
-
-.login form .input {
-    height: 45px;
-    font-size: 16px;
-    padding-left: 8px;
-    border-radius: 3px;
-}
-
 #wp-submit {
     float: none;
-    background-color: #ffa400;
-    background-color: var(--yellow);
     text-transform: uppercase;
     padding: 1rem 2em;
     line-height: 1;
