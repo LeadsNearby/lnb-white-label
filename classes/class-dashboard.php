@@ -20,7 +20,7 @@ class Dashboard {
         $this->plugin_url = plugin_dir_url(  $plugin_directory );
         add_action( 'admin_init', [ $this, 'check_if_user_is_client'] );
         add_action( 'admin_menu', [ $this, 'hide_default_dashboard'] );
-        add_action( 'admin_menu', [ $this, 'add_dashboard_menu_item'] );
+        // add_action( 'admin_menu', [ $this, 'add_dashboard_menu_item'] );
         // add_action( 'admin_menu', [ $this, 'test_me'] );
     }
 
@@ -68,8 +68,9 @@ class Dashboard {
         ob_start();
         
         ?>
-
-        <h1>LeadsNearby Client Dashboard</h1>
+        <div class="wrap">
+            <h1>LeadsNearby Client Dashboard</h1>
+        </div>
 
         <?php
 
@@ -85,7 +86,7 @@ class Dashboard {
             'lnb-client-dashboard.php',
             [ $this, 'render_dashboard' ],
             $this->plugin_url . 'assets/images/icon-bw.svg',
-            0
+            2
         );
     }
 

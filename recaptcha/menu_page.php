@@ -4,67 +4,115 @@ class reCaptchaMenuPage {
     
     public function __construct() {
         add_action( 'admin_menu', array($this , 'add_menupage') );
+        add_action('wp_ajax_foobar_action', [ $this, 'foobar_action' ] );
+        add_action('wp_ajax_nopriv_foobar_action', [ $this, 'foobar_action' ] );
+    }
+
+    public function foobar_action() {
+        // check_ajax_referrer();
+        $grecaptcha_response = wp_remote_get('https://www.google.com/recaptcha/api/siteverify?secret='.$_POST['secretkey'].'&response='.$_POST['response']);
+        $grecaptcha_body = wp_remote_retrieve_body( $grecaptcha_response ); 
+        wp_send_json( (object) [ 'grecaptchaVerify' => json_decode($grecaptcha_body), 'domainVerify' => false ] );
     }
     
-    function add_menupage() {
-        add_options_page ( 
-            'LNB Recaptcha', 
-            'LNB Recaptcha', 
+    public function add_menupage() {
+        add_submenu_page(
+            'lnb-settings.php',
+            'reCAPTCHA Settings', 
+            'reCAPTCHA', 
             'manage_options', 
-            'recaptcha_menu_page', 
+            'recaptcha-page.php', 
             array($this, 'menu_page')
         );
     }
     
-     public function menu_page() {
+    public function menu_page() {
          
-            if ( isset($_POST["submit"]))  {
-                if ( isset($_POST["repcatcha-enable"])) {
-                    update_option( 'wl-recaptcha-enabled', $_POST["repcatcha-enable"] );
-                    if (isset($_POST["captcha_api_key"]) || isset($_POST["captcha_site_key"]  )) {
-                        update_option( 'captcha_api_key' , $_POST["captcha_api_key"] );
-                        update_option( 'captcha_site_key' , $_POST["captcha_site_key"] );
-                    } else {
-                        echo "Please Enter Your ApiKey";
-                    }
-                } else {
-                    update_option( 'wl-recaptcha-enabled', "off" );
-                    update_option( 'captcha_api_key' , $_POST["captcha_api_key"] );
-                    update_option( 'captcha_site_key' , $_POST["captcha_site_key"] );
-                } 
-            }
+        if ( isset( $_POST['submit'] ) && isset( $_POST['lnb-recaptcha'] ) ) {
+            update_option( 'lnb-recaptcha', $_POST['lnb-recaptcha'] );
+        }
+
+        preg_match( '/[a-z]+/', '76.548.1992.1', $matches );
+        if( empty( $matches ) || gethostname() == 'localhost' ) {
+            $dev_env = true;
+        }
+
+        $dev_env = false;
+
+        $options = get_option( 'lnb-recaptcha' );
+        if( is_array( $options ) ) {
+            extract( $options );
+        }
          
-         ?>
-         
-            <div class="recaptcha-menu-page">
-                <br /><br />
-                <img class="plugin_logo" style="width: 450px" src="https://media-exp2.licdn.com/media/AAEAAQAAAAAAAAt5AAAAJDZmZjBjODAwLTFlNGItNDRlNy04NmFmLWYxNjhmZmNjNjdmMA.png">
-                <h1>LNB Recaptcha Settings</h1>
-                <br />
-                <form id="recaptcha-form" method="post">
-                    <img style="width: 100px" src="https://www.google.com/recaptcha/intro/images/hero-recaptcha-invisible.gif" ><br /><br />
-                    <span style="font-size:14px">Use "default" for the standard LNB Site Key/Secret, or input custom ones for that domain.</span><br /><br /><br />
-                    <span style="font-size: 18px;">Enable ReCaptcha &nbsp; &nbsp; </span>
-                        <input class="rc-api-key-check" type="checkbox" name="repcatcha-enable" <?php if (get_option("wl-recaptcha-enabled") == "on") { echo "checked"; } ?>  /><br /> <br /> 
-                  
-                        <span style="font-size: 18px;">Google Recaptcha Site Key &nbsp; &nbsp; </span><input type="textbox" style="width: 400px; text-align: left;" name="captcha_site_key" 
-                        value="<?php echo get_option("captcha_site_key");  ?>" /><br /> <br />
-                    <span class="class="rc-api-key">
-                        <span style="font-size: 18px;">Google Recaptcha Secret &nbsp; &nbsp; </span><input type="textbox" style="width: 400px; text-align: left;" name="captcha_api_key" 
-                        value="<?php echo get_option("captcha_api_key");  ?>" /><br /> <br />
-                    </span>
-                
-                    <span style="color:red"> <?php if (get_option("wl-recaptcha-enabled") == "on" && strlen(get_option("captcha_api_key")) < 38 && get_option("captcha_api_key") !== "default" ) { echo "Please Enter a Valid Google Recaptcha Secret to Enable"; } ?> </span><br/></ >
-                     <span style="color:red"> <?php if (get_option("wl-recaptcha-enabled") == "on" && strlen(get_option("captcha_site_key")) < 38 && get_option("captcha_site_key") !== "default" ) { echo "Please Enter a Valid Google Recaptcha Site Key to Enable"; } ?> </span>
-                    <br />
-                    <input type="submit" name="submit" value="Save Options"  />
+        ?>
+
+        <div class="wrap">
+            <div class="lnbSettingsPage">
+                <h1 class="lnbSettingsPage__title">LeadsNearby reCAPTCHA Settings</h1>
+                <?php if( ! $dev_env ) { ?>
+                <form id="recaptcha-form" method="post" class="lnbSettings">
+                    <div class="lnbSetting">
+                        <input id="lnb-recaptcha-enabled"  class="lnbSetting__field lnbSetting__field--checkbox" name="lnb-recaptcha[enabled]" type="checkbox" <?php if($enabled == "on") { echo 'checked'; } ?>  />
+                        <label for="lnb-recaptcha-enabled" class="lnbSetting__label">Enable reCAPTCHA</label>
+                    </div>
+                    <div class="lnbSetting lnbSetting--freeForm">
+                        <p>Leave blank for the standard LeadsNearby Site Key/Secret, or input custom ones for that domain.</p>
+                    </div>
+                    <div class="lnbSetting">
+                        <input required id="lnb-recaptcha-site-key" class="lnbSetting__field lnbSetting__field--text" name="lnb-recaptcha[site_key]" type="text" minlength="38" value="<?php echo $site_key  ?>" />
+                        <label class="lnbSetting__label">Site Key</label>
+                        <span class="lnbSetting__highlight"></span>
+                    </div>
+                    <div class="lnbSetting">
+                        <input required id="lnb-recaptcha-secret-key" name="lnb-recaptcha[secret_key]" class="lnbSetting__field lnbSetting__field--text" type="text" minlength="38" value="<?php echo $secret_key  ?>" />
+                        <label class="lnbSetting__label">Secret Key</label>
+                        <span class="lnbSetting__highlight"></span>
+                    </div>
+                    <div class="lnbSetting lnbSetting--hidden">
+                        <input id="lnb-recaptcha-validated" name="lnb-recaptcha[validated]" class="lnbSetting__field lnbSetting__field--hidden" type="hidden" value="<?php echo $validated  ?>" />
+                    </div>
+                    <input id="save-settings" class="button button-primary" type="submit" name="submit" value="Save Options" />
                 </form>
+                <div class="lnbModal">
+                    <script>
+                        window.recaptcha_nonce = '<?php echo wp_create_nonce(); ?>'
+                        var verifyCallback = function(response) {
+                            console.log(response);
+                            testRecaptcha(response)
+                        };
+                        let lnbRecaptcha
+                        var onloadCallback = function() {
+                            lnbRecaptcha = grecaptcha.render('lnb-recaptcha-validate', {
+                                'sitekey': document.querySelector('#lnb-recaptcha-site-key').value,
+                                'callback': verifyCallback
+                            })
+                        }
+                        const testRecaptcha = function(response) {
+                            fetch(ajaxurl, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
+                                },
+                                body: `action=foobar_action&_wpnonce=${window.recaptcha_nonce}&secretkey=${document.querySelector('#lnb-recaptcha-secret-key').value}&response=${response}`,
+                                credentials: 'same-origin'
+                            }).then(function (res) {
+                                return res.json();
+                            }).then(function(json){console.log(json)});
+                        }
+                    </script>
+                    <form action="">
+                        <div id="lnb-recaptcha-validate"></div>
+                    </form>
+                    <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit" async defer></script>
+                </div>
+                <?php } else { ?>
+                <p>reCAPTCHA is not available in development or staging environments.</p>
+                <?php } ?>
             </div>
+        </div>
             
-            <?php
+        <?php
             
-            //print_r($_POST);
-            
-     }
+    }
     
 }

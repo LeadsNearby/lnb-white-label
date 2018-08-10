@@ -11,6 +11,11 @@ a:hover {
     color: #006ada !important;
 }
 
+.message {
+    margin: 1rem auto;
+    border-left-color: #006ada !important;
+}
+
 .login {
     min-width: 100vw;
     min-height: 100vh;
@@ -22,24 +27,19 @@ a:hover {
     font-family: Open Sans, Arial, Helvetical, sans-serif;
 }
 
-/* .login label {
-    display: none;
-    color: #000;
-} */
-
 .login-wrapper {
-    display: none;
+    display: block;
     width: 100%;
     max-width: 350px;
     padding: 2rem;
 }
 
-.login-wrapper.animate {
+/* .login-wrapper.animate {
     display: block;
     animation-name: bounceInDownCooler;
     animation-duration: 1s;
     animation-fill-mode: forwards;
-}
+} */
 
 #login {
     box-shadow: none;

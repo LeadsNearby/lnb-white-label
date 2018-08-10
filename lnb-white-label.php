@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /*
 Plugin Name: LeadsNearby White Label
 Plugin URI: http://www.leadsnearby.com
@@ -44,7 +44,7 @@ class LNB_White_Label {
 	}
 
 	function init_login_styles() {
-        wp_register_style( 'lnb-white-label-login', plugins_url( 'assets/css/login-style.min.css', __FILE__ ) );
+        wp_register_style( 'lnb-white-label-login', plugins_url( 'assets/css/login-style.css', __FILE__ ) );
 		wp_enqueue_style( 'lnb-white-label-login' );
 	}
 
@@ -82,13 +82,13 @@ class LNB_White_Label {
             body.appendChild(loginWrapper)
             var inputs = document.getElementsByClassName('input')
 			for(let i = 0; i < inputs.length; i++) {
-				inputs[i].parentElement.parentElement.appendChild(inputs[i])
+				inputs[i].parentElement.parentElement.prepend(inputs[i])
 			}
-            inputs[0].placeholder = 'Username/email'
-            inputs[1].placeholder = 'Password'
+            inputs[0].required  = true
+            inputs[1].required  = true
         </script>
 
-    <? }
+    <?php }
 
 	public static function add_user_role() {
 		$permissions = array(
@@ -110,7 +110,7 @@ class LNB_White_Label {
 			'edit_published_posts' => true,
 			'manage_categories' => true,
 			'manage_links' => true,
-			'moderate_comments' => true,
+			'moderate_comments' => false,
 			'publish_pages' => true,
 			'publish_posts' => true,
 			'read' => true,
@@ -121,7 +121,7 @@ class LNB_White_Label {
 			'install_plugins' => false,				
 			'install_themes' => false,				
 			'list_users' => false, 				
-			'manage_options' => true, 				
+			'manage_options' => false, 				
 			'promote_users' => false, 				
 			'remove_users' => false, 				
 			'switch_themes' => false, 								 				
@@ -131,17 +131,17 @@ class LNB_White_Label {
 			'update_plugin' => false,
 			'update_core' => false,
 			'activate_plugins' => false,				
-			'create_users' => false,				
-			'delete_plugins' => false,				
+			'create_users' => false,
+			'delete_plugins' => false,
 			'delete_themes' => false,				
 			'delete_users' => false,				
 			'edit_files' => false,				
 			'edit_plugins' => false,				
 			'edit_theme_options' => false,							
 			'edit_users' => false,				
-			'export' => false,				
+			'export' => false,			
 			'import' => false,  
-			);
+		);
 		$wp_roles = new WP_Roles();
 
 		$lnb_role = $wp_roles->get_role( 'lnb_client' );
@@ -244,14 +244,12 @@ if (is_admin()) {
     $recaptcha_menu_page = new reCaptchaMenuPage();
 }
 
-if (get_option("wl-recaptcha-enabled") == "on" && strlen(get_option("captcha_api_key")) > 38 && strlen(get_option("captcha_site_key")) > 38) {
+$recaptcha_options = get_option('lnb-recaptcha');
+if ($recaptcha['enabled'] == "on" && strlen(get_option("captcha_api_key")) > 38 && strlen(get_option("captcha_site_key")) > 38) {
     $recaptcha = new lnbRecaptcha();
 } elseif (get_option("wl-recaptcha-enabled") == "on" && get_option("captcha_api_key") == "default" && get_option("captcha_site_key") == "default" ) {
     $recaptcha = new lnbRecaptcha();
 }
 
-
 register_activation_hook( __FILE__, array( 'LNB_White_Label', 'add_user_role' ) );
 register_uninstall_hook( __FILE__, array( 'LNB_White_Label', 'remove_user_role' ) );
-
-?>

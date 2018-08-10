@@ -10,7 +10,11 @@ class lnbRecaptcha {
         add_action( 'register_post', array( $this, 'verify_captcha' ) );
         add_action( 'lostpassword_form', array( $this, 'captcha_form' ) );
         add_action( 'lostpassword_post', array( $this, 'verify_captcha_lost_password' ) );
-        
+        add_action( 'login_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
+    }
+
+    public function enqueue_scripts() {
+        wp_enqueue_script( 'recaptcha', 'https://www.google.com/recaptcha/api.js', array(), null, true );
     }
 
 /*** Include Captcha JS ***/
