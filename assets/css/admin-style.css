@@ -1419,8 +1419,14 @@ html.wp-toolbar {
      .auto-fold .components-notice-list {
        left: 200px;
      }
+     .components-notice-list {
+       left: 200px !important;
+     }
   }
   @media (min-width:600px) {
+    .edit-post-layout {
+      padding-top: 116px !important;
+    }
     .edit-post-sidebar {
       top: 130px !important;
       z-index: 90;
