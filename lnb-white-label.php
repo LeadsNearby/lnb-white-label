@@ -182,8 +182,8 @@ class LNB_White_Label {
     }
 
     public function add_footer_text() {
-        echo '<a href="http://www.leadsnearby.com/" target="_blank" title="LeadsNearby Local SEO and Web Design"><img src="' . plugins_url('images/lnb_white_label_footer.png', __FILE__) . '"></a>';
-        echo '<span id="footer-thankyou">Developed by <a href="http://www.leadsnearby.com" target="_blank">LeadsNearby</a></span> | <a href="http://www.leadsnearby.com" target="_blank">Contact Us</a></span> | Call Us: <a href="http://www.leadsnearby.com" target="_blank">919-758-8420</a></span>';
+        echo '<a href="http://www.leadsnearby.com/" target="_blank" title="LeadsNearby Local SEO and Web Design"><img style="display:inline-block;vertical-align:middle;width:150px;padding-right:1rem" src="' . plugins_url('assets/images/logo.svg', __FILE__) . '"></a>';
+        echo '<span id="footer-thankyou">Developed by <a href="https://www.leadsnearby.com" target="_blank">LeadsNearby</a></span> | <a href="https://www.leadsnearby.com" target="_blank">Contact Us</a></span> | Call Us: <a href="http://www.leadsnearby.com" target="_blank">919-758-8420</a></span><span style="display:inline-block;width:1rem"></span>';
     }
 
     // Removes WP Logo from Dashboard
@@ -196,39 +196,67 @@ class LNB_White_Label {
     public function add_admin_bar_links() {
 
         $menu_array = array(
-            0 => array(
+            array(
                 'id' => 'lnb_parent_menu',
-                'title' => __('LeadsNearby Menu'),
+                'title' => 'LeadsNearby',
                 'href' => __('www.leadsnearby.com'),
-            ),
-            1 => array(
-                'parent' => 'lnb_parent_menu',
-                'id' => 'lnb_menu_contact',
-                'title' => __('Contact LeadsNearby | 919-758-8420'),
-                'href' => __('www.leadsnearby.com/contact-us/'),
-            ),
-            2 => array(
-                'parent' => 'lnb_parent_menu',
-                'id' => 'lnb_menu_client_group',
-                'title' => __('Client Area'),
-                'href' => __('www.leadsnearby.com/login/'),
                 'meta' => array(
-                    'class' => 'st_menu_download',
+                    'target' => 'blank',
                 ),
             ),
-            3 => array(
-                'parent' => 'lnb_menu_client_group',
-                'id' => 'lnb_menu_client_login',
-                'title' => __('Client Login'),
-                'href' => __('www.leadsnearby.com/login/'),
+            array(
+                'parent' => 'lnb_parent_menu',
+                'id' => 'lnb_menu_contact',
+                'title' => __('Contact Us'),
+                'href' => __('https://www.leadsnearby.com/contact-us/'),
+                'meta' => array(
+                    'target' => 'blank',
+                ),
             ),
-            4 => array(
-                'parent' => 'lnb_menu_client_group',
-                'id' => 'lnb_menu_client_resources',
-                'title' => __('Client Resources'),
-                'href' => __('www.leadsnearby.com/resources/'),
-            ),
+            // 2 => array(
+            //     'parent' => 'lnb_parent_menu',
+            //     'id' => 'lnb_menu_client_group',
+            //     'title' => __('Client Area'),
+            //     'href' => __('www.leadsnearby.com/login/'),
+            //     'meta' => array(
+            //         'class' => 'st_menu_download',
+            //     ),
+            // ),
+            // 3 => array(
+            //     'parent' => 'lnb_menu_client_group',
+            //     'id' => 'lnb_menu_client_login',
+            //     'title' => __('Client Login'),
+            //     'href' => __('www.leadsnearby.com/login/'),
+            // ),
+            // 4 => array(
+            //     'parent' => 'lnb_menu_client_group',
+            //     'id' => 'lnb_menu_client_resources',
+            //     'title' => __('Client Resources'),
+            //     'href' => __('www.leadsnearby.com/resources/'),
+            // ),
         );
+
+        $user = wp_get_current_user();
+        $theme = wp_get_theme();
+        if(is_multisite() && in_array('lnb_client', (array) $user->roles)) {
+            $sites = get_blogs_of_user($user->id);
+            if(count($sites) > 1) {
+                $menu_array[] = array(
+                    'id' => 'lnb_site_list',
+                    'title' => 'Your Sites',
+                    'href' => '#'
+                );
+
+                foreach($sites as $site) {
+                    $menu_array[] = array(
+                        'parent' => 'lnb_site_list',
+                        'id' => 'lnb_site_list_' . $site->userblog_id,
+                        'title' => $site->blogname,
+                        'href' => get_admin_url($site->userblog_id)
+                    );
+                }
+            }
+        }
 
         if (!is_super_admin()) {
             global $wp_admin_bar;
