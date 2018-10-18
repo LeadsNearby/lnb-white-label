@@ -34,6 +34,8 @@ class LNB_White_Label {
 
         add_action('login_footer', [$this, 'login_footer']);
 
+        add_action('admin_head', [$this, 'hide_theme_menus']);
+
         if (is_admin()) {
             $this->admin_init();
         }
@@ -141,7 +143,7 @@ class LNB_White_Label {
             'delete_users' => false,
             'edit_files' => false,
             'edit_plugins' => false,
-            'edit_theme_options' => false,
+            'edit_theme_options' => true,
             'edit_users' => false,
             'export' => false,
             'import' => false,
@@ -179,6 +181,17 @@ class LNB_White_Label {
 
         add_action('admin_enqueue_scripts', array($this, 'init_admin_styles'));
         add_filter('admin_footer_text', array($this, 'add_footer_text'));
+
+    }
+
+    public function hide_theme_menus() {
+        remove_submenu_page('themes.php', 'themes.php'); // hide the theme selection submenu
+        // remove_submenu_page('themes.php', 'widgets.php'); // hide the widgets submenu
+        remove_submenu_page('themes.php', 'customize.php?return=%2Fwp-admin%2Ftools.php'); // hide the customizer submenu
+        remove_submenu_page('themes.php', 'customize.php?return=%2Fwp-admin%2Fwidgets.php'); // hide the background submenu
+        remove_submenu_page('themes.php', 'customize.php?return=%2Fwp-admin%2Fnav-menus.php'); // hide the background submenu
+        remove_submenu_page('themes.php', 'customize.php?return=%2Fwp-admin%2Fadmin.php%3Fpage%3Dfire-options'); // hide the background submenu
+        remove_submenu_page('themes.php', 'customize.php?return=%2Fwp-admin%2Fedit.php'); // hide the background submenu
     }
 
     public function add_footer_text() {
@@ -238,21 +251,21 @@ class LNB_White_Label {
 
         $user = wp_get_current_user();
         $theme = wp_get_theme();
-        if(is_multisite() && in_array('lnb_client', (array) $user->roles)) {
+        if (is_multisite() && in_array('lnb_client', (array) $user->roles)) {
             $sites = get_blogs_of_user($user->id);
-            if(count($sites) > 1) {
+            if (count($sites) > 1) {
                 $menu_array[] = array(
                     'id' => 'lnb_site_list',
                     'title' => 'Your Sites',
-                    'href' => '#'
+                    'href' => '#',
                 );
 
-                foreach($sites as $site) {
+                foreach ($sites as $site) {
                     $menu_array[] = array(
                         'parent' => 'lnb_site_list',
                         'id' => 'lnb_site_list_' . $site->userblog_id,
-                        'title' => $site->blogname,
-                        'href' => get_admin_url($site->userblog_id)
+                        'title' => '<span style="display:inline-block;background-image: url(data:image/svg+xml;base64,PHN2ZyBhcmlhLWhpZGRlbj0idHJ1ZSIgZGF0YS1wcmVmaXg9ImZhcyIgZGF0YS1pY29uPSJmaXJlIiBjbGFzcz0ic3ZnLWlubGluZS0tZmEgZmEtZmlyZSBmYS13LTEyIiByb2xlPSJpbWciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iMCAwIDM4NCA1MTIiIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCI+PHBhdGggZmlsbD0iYmxhbmsiIGQ9Ik0yMTYgMjMuODU4YzAtMjMuODAyLTMwLjY1My0zMi43NjUtNDQuMTQ5LTEzLjAzOEM0OCAxOTEuODUxIDIyNCAyMDAgMjI0IDI4OGMwIDM1LjYyOS0yOS4xMTQgNjQuNDU4LTY0Ljg1IDYzLjk5NEMxMjMuOTggMzUxLjUzOCA5NiAzMjIuMjIgOTYgMjg3LjA0NnYtODUuNTFjMC0yMS43MDMtMjYuNDcxLTMyLjIyNS00MS40MzItMTYuNTA0QzI3LjgwMSAyMTMuMTU4IDAgMjYxLjMzMiAwIDMyMGMwIDEwNS44NjkgODYuMTMxIDE5MiAxOTIgMTkyczE5Mi04Ni4xMzEgMTkyLTE5MmMwLTE3MC4yOS0xNjgtMTkzLjAwMy0xNjgtMjk2LjE0MnoiPjwvcGF0aD48L3N2Zz4=);width: 20px;height:100%;vertical-align:middle;background-size:contain;background-repeat:no-repeat;padding-left:4px; color:inherit;"></span>' . $site->blogname,
+                        'href' => get_admin_url($site->userblog_id),
                     );
                 }
             }
