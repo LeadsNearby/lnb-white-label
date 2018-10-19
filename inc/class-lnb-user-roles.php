@@ -137,20 +137,48 @@ if (!class_exists('\lnb\UserRoles')) {
 
         public static function add_user_roles() {
             $wp_roles = new WP_Roles();
-            foreach (static::$roles as $role) {
-                $role_exists = $wp_roles->get_role($role['id']);
-                if (!$role_exists) {
-                    add_role($role['id'], __($role['title']), $role['perms']);
-                } else {
-                    foreach ($role['perms'] as $cap => $grant) {
-                        $role_exists->add_cap($cap, $grant);
+            if (is_multisite()) {
+                $sites = get_sites();
+                foreach ($sites as $site) {
+                    switch_to_blog($site);
+                    foreach (static::$roles as $role) {
+                        static::add_user_role($role, $wp_roles);
                     }
+
+                    // Removes old LNB Admin Role
+                    $wp_roles->remove_role('admin');
+                    $wp_roles->remove_role('client');
+                    restore_current_blog();
                 }
+                return;
+            }
+
+            foreach (static::$roles as $role) {
+                static::add_user_role($role, $wp_roles);
             }
 
             // Removes old LNB Admin Role
             $wp_roles->remove_role('admin');
             $wp_roles->remove_role('client');
+        }
+
+        private static function add_user_role($role, $wp_roles = null) {
+            if (!$wp_roles) {
+                $wp_roles = new WP_Roles();
+            }
+
+            $role_exists = $wp_roles->get_role($role['id']);
+            if (!$role_exists) {
+                return add_role($role['id'], __($role['title']), $role['perms']);
+            } else {
+                remove_role($role['id']);
+                return add_role($role['id'], __($role['title']), $role['perms']);
+                // foreach ($role['perms'] as $cap => $grant) {
+                //     $role_exists->add_cap($cap, $grant);
+                // }
+                // return true;
+            }
+
         }
 
         public static function remove_user_roles() {
