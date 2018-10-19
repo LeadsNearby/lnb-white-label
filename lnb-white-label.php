@@ -10,7 +10,6 @@ Author URI: http://www.leadsnearby.com
 
 require_once plugin_dir_path(__FILE__) . 'inc/class-lnb-login.php';
 require_once plugin_dir_path(__FILE__) . 'inc/class-dashboard.php';
-require_once plugin_dir_path(__FILE__) . 'inc/class-lnb-user-roles.php';
 use lnb\Dashboard;
 use lnb\LoginPage;
 use lnb\UserRoles;
@@ -18,8 +17,11 @@ use lnb\UserRoles;
 $login_page = LoginPage::get_instance();
 $dashboard = Dashboard::get_instance(__FILE__);
 
-register_activation_hook(__FILE__, array('\lnb\UserRoles', 'add_user_roles'));
-register_uninstall_hook(__FILE__, array('\lnb\UserRoles', 'remove_user_roles'));
+require_once plugin_dir_path(__FILE__) . 'inc/class-lnb-user-roles.php';
+register_activation_hook(__FILE__, ['\lnb\UserRoles', 'add_user_roles']);
+register_uninstall_hook(__FILE__, ['\lnb\UserRoles', 'remove_user_roles']);
+add_filter('upload_size_limit', ['\lnb\UserRoles', 'limit_upload_size']);
+add_filter('wp_handle_upload_prefilter', ['\lnb\UserRoles', 'filter_limit_upload_size']);
 
 require 'recaptcha/lnb_recaptcha.php';
 require 'recaptcha/menu_page.php';
@@ -36,9 +38,6 @@ class LNB_White_Label {
         if (is_admin()) {
             $this->admin_init();
         }
-
-        add_filter('upload_size_limit', [$this, 'limit_upload_size']);
-        add_filter('wp_handle_upload_prefilter', [$this, 'filter_limit_upload_size']);
     }
 
     public function init_admin_styles() {
@@ -149,25 +148,6 @@ class LNB_White_Label {
                 $wp_admin_bar->add_menu($args);
             }
         }
-    }
-
-    public function limit_upload_size($limit) {
-        $user = \wp_get_current_user();
-        if (in_array('lnb_client', (array) $user->roles)) {
-            $limit = 1024 * 1000;
-        }
-        return $limit;
-    }
-
-    public function filter_limit_upload_size($file) {
-        $user = \wp_get_current_user();
-        if (in_array('lnb_client', (array) $user->roles)) {
-            $limit = 1024 * 1000;
-            if ($file['size'] > $limit) {
-                $file['error'] = __('Maximum filesize is 1mb');
-            }
-        }
-        return $file;
     }
 
 }

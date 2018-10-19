@@ -191,5 +191,24 @@ if (!class_exists('\lnb\UserRoles')) {
 
         }
 
+        public static function limit_upload_size($limit) {
+            $user = \wp_get_current_user();
+            if (in_array('lnb_client', (array) $user->roles) || in_array('lnb_csm', (array) $user->roles)) {
+                $limit = 1024 * 1000;
+            }
+            return $limit;
+        }
+
+        public static function filter_limit_upload_size($file) {
+            $user = \wp_get_current_user();
+            if (in_array('lnb_client', (array) $user->roles) || in_array('lnb_csm', (array) $user->roles)) {
+                $limit = 1024 * 1000;
+                if ($file['size'] > $limit) {
+                    $file['error'] = __('Maximum filesize is 1mb');
+                }
+            }
+            return $file;
+        }
+
     }
 }
