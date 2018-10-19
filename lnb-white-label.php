@@ -147,6 +147,10 @@ class LNB_White_Label {
             'edit_users' => false,
             'export' => false,
             'import' => false,
+            'gravityforms_view_entries' => true,
+            'gravityforms_edit_entries' => true,
+            'gravityforms_delete_entries' => true,
+            'gravityforms_edit_forms' => true,
         );
         $wp_roles = new WP_Roles();
 
@@ -195,7 +199,7 @@ class LNB_White_Label {
     }
 
     public function add_footer_text() {
-        echo '<a href="http://www.leadsnearby.com/" target="_blank" title="LeadsNearby Local SEO and Web Design"><img style="display:inline-block;vertical-align:middle;width:150px;padding-right:1rem" src="' . plugins_url('assets/images/logo.svg', __FILE__) . '"></a>';
+        echo '<a href="https://www.leadsnearby.com/" target="_blank" title="LeadsNearby Local SEO and Web Design"><img style="display:inline-block;vertical-align:middle;width:150px;padding-right:1rem" src="' . plugins_url('assets/images/logo.svg', __FILE__) . '"></a>';
         echo '<span id="footer-thankyou">Developed by <a href="https://www.leadsnearby.com" target="_blank">LeadsNearby</a></span> | <a href="https://www.leadsnearby.com" target="_blank">Contact Us</a></span> | Call Us: <a href="http://www.leadsnearby.com" target="_blank">919-758-8420</a></span><span style="display:inline-block;width:1rem"></span>';
     }
 
