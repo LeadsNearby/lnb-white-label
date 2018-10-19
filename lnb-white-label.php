@@ -8,10 +8,15 @@ Author: LeadsNearby
 Author URI: http://www.leadsnearby.com
  */
 
-require_once plugin_dir_path(__FILE__) . 'classes/class-dashboard.php';
+require_once plugin_dir_path(__FILE__) . 'inc/class-dashboard.php';
 use lnb\Dashboard;
-
 $dashboard = Dashboard::get_instance(__FILE__);
+
+require_once plugin_dir_path(__FILE__) . 'inc/class-lnb-user-roles.php';
+use lnb\UserRoles;
+
+register_activation_hook(__FILE__, array('\lnb\UserRoles', 'add_user_roles'));
+register_uninstall_hook(__FILE__, array('\lnb\UserRoles', 'remove_user_roles'));
 
 require 'recaptcha/lnb_recaptcha.php';
 require 'recaptcha/menu_page.php';
@@ -95,89 +100,6 @@ class LNB_White_Label {
         </script>
 
     <?php }
-
-    public static function add_user_role() {
-        $permissions = array(
-            'delete_others_pages' => true,
-            'delete_others_posts' => true,
-            'delete_pages' => true,
-            'delete_posts' => true,
-            'delete_private_pages' => true,
-            'delete_private_posts' => true,
-            'delete_published_pages' => true,
-            'delete_published_posts' => true,
-            'edit_others_pages' => true,
-            'edit_others_posts' => true,
-            'edit_pages' => true,
-            'edit_posts' => true,
-            'edit_private_pages' => true,
-            'edit_private_posts' => true,
-            'edit_published_pages' => true,
-            'edit_published_posts' => true,
-            'manage_categories' => true,
-            'manage_links' => true,
-            'moderate_comments' => false,
-            'publish_pages' => true,
-            'publish_posts' => true,
-            'read' => true,
-            'read_private_pages' => true,
-            'read_private_posts' => true,
-            'unfiltered_html' => true,
-            'upload_files' => true,
-            'install_plugins' => false,
-            'install_themes' => false,
-            'list_users' => false,
-            'manage_options' => false,
-            'promote_users' => false,
-            'remove_users' => false,
-            'switch_themes' => false,
-            'update_themes' => false,
-            'edit_dashboard' => false,
-            'edit_themes' => false,
-            'update_plugin' => false,
-            'update_core' => false,
-            'activate_plugins' => false,
-            'create_users' => false,
-            'delete_plugins' => false,
-            'delete_themes' => false,
-            'delete_users' => false,
-            'edit_files' => false,
-            'edit_plugins' => false,
-            'edit_theme_options' => true,
-            'edit_users' => false,
-            'export' => false,
-            'import' => false,
-            'gravityforms_view_entries' => true,
-            'gravityforms_edit_entries' => true,
-            'gravityforms_delete_entries' => true,
-            'gravityforms_edit_forms' => true,
-        );
-        $wp_roles = new WP_Roles();
-
-        $lnb_role = $wp_roles->get_role('lnb_client');
-
-        if (!$lnb_role) {
-            add_role('lnb_client', __('LeadsNearby Client'), $permissions);
-        } else {
-            foreach ($permissions as $cap => $grant) {
-                $lnb_role->add_cap($cap, $grant);
-            }
-        }
-
-        // Removes old LNB Admin Role
-        $wp_roles->remove_role('admin');
-        $wp_roles->remove_role('client');
-    }
-
-    public static function remove_user_role() {
-
-        $wp_roles = new WP_Roles();
-
-        $wp_roles->remove_role('lnb_client');
-        $wp_roles->remove_role('admin');
-        $wp_roles->remove_role('client');
-
-    }
 
     public function admin_init() {
         require_once plugin_dir_path(__FILE__) . '/updater/github-updater.php';
@@ -317,6 +239,3 @@ if ($recaptcha['enabled'] == "on" && strlen(get_option("captcha_api_key")) > 38 
 } elseif (get_option("wl-recaptcha-enabled") == "on" && get_option("captcha_api_key") == "default" && get_option("captcha_site_key") == "default") {
     $recaptcha = new lnbRecaptcha();
 }
-
-register_activation_hook(__FILE__, array('LNB_White_Label', 'add_user_role'));
-register_uninstall_hook(__FILE__, array('LNB_White_Label', 'remove_user_role'));
