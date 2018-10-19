@@ -8,12 +8,15 @@ Author: LeadsNearby
 Author URI: http://www.leadsnearby.com
  */
 
+require_once plugin_dir_path(__FILE__) . 'inc/class-lnb-login.php';
 require_once plugin_dir_path(__FILE__) . 'inc/class-dashboard.php';
-use lnb\Dashboard;
-$dashboard = Dashboard::get_instance(__FILE__);
-
 require_once plugin_dir_path(__FILE__) . 'inc/class-lnb-user-roles.php';
+use lnb\Dashboard;
+use lnb\LoginPage;
 use lnb\UserRoles;
+
+$login_page = LoginPage::get_instance();
+$dashboard = Dashboard::get_instance(__FILE__);
 
 register_activation_hook(__FILE__, array('\lnb\UserRoles', 'add_user_roles'));
 register_uninstall_hook(__FILE__, array('\lnb\UserRoles', 'remove_user_roles'));
@@ -21,23 +24,12 @@ register_uninstall_hook(__FILE__, array('\lnb\UserRoles', 'remove_user_roles'));
 require 'recaptcha/lnb_recaptcha.php';
 require 'recaptcha/menu_page.php';
 
-add_filter('login_headerurl', 'custom_loginlogo_url');
-function custom_loginlogo_url($url) {
-    return 'https://www.leadsnearby.com/';
-}
-
 class LNB_White_Label {
 
     public function __construct() {
 
-        add_action('login_enqueue_scripts', array($this, 'init_login_styles'), 99);
-        add_action('login_enqueue_scripts', array($this, 'init_login_scripts'), 0);
-        add_action('login_head', array($this, 'init_login_head'));
-
         add_action('wp_before_admin_bar_render', array($this, 'remove_admin_bar_links'));
         add_action('admin_bar_menu', array($this, 'add_admin_bar_links'), 25);
-
-        add_action('login_footer', [$this, 'login_footer']);
 
         add_action('admin_head', [$this, 'hide_theme_menus']);
 
@@ -53,53 +45,6 @@ class LNB_White_Label {
         wp_register_style('lnb-white-label', plugins_url('assets/css/admin-style.css', __FILE__));
         wp_enqueue_style('lnb-white-label');
     }
-
-    public function init_login_styles() {
-        wp_register_style('lnb-white-label-login', plugins_url('assets/css/login-style.css', __FILE__));
-        wp_enqueue_style('lnb-white-label-login');
-    }
-
-    public function init_login_scripts() {
-    }
-
-    public function init_login_head() {?>
-        <style>
-            :root {
-                --logo: url('<?php echo plugins_url('assets/images/logo.svg', __FILE__); ?>');
-            }
-        </style>
-        <script>
-            (function(){
-                window.onload = function() {
-                    var form = document.querySelector('.login-wrapper')
-                    var logo = new Image()
-                    logo.src = '<?php echo plugins_url('assets/images/logo.svg', __FILE__); ?>'
-                    logo.onload = function() {
-                        form.classList.add('animate')
-                    }
-                }
-            })()
-        </script>
-    <?php }
-
-    public function login_footer() {?>
-
-        <script>
-            var login = document.querySelector('#login')
-            var loginWrapper = document.createElement('div')
-            loginWrapper.classList.add('login-wrapper')
-            loginWrapper.appendChild(login)
-            var body = document.querySelector('body')
-            body.appendChild(loginWrapper)
-            var inputs = document.getElementsByClassName('input')
-			for(let i = 0; i < inputs.length; i++) {
-				inputs[i].parentElement.parentElement.prepend(inputs[i])
-			}
-            inputs[0].required  = true
-            inputs[1].required  = true
-        </script>
-
-    <?php }
 
     public function admin_init() {
         require_once plugin_dir_path(__FILE__) . '/updater/github-updater.php';
@@ -177,7 +122,7 @@ class LNB_White_Label {
 
         $user = wp_get_current_user();
         $theme = wp_get_theme();
-        if (is_multisite() && in_array('lnb_client', (array) $user->roles)) {
+        if (is_multisite() && (in_array('lnb_client', (array) $user->roles) || in_array('lnb_csm', (array) $user->roles))) {
             $sites = get_blogs_of_user($user->id);
             if (count($sites) > 1) {
                 $menu_array[] = array(
