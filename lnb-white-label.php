@@ -8,9 +8,9 @@ Author: LeadsNearby
 Author URI: http://www.leadsnearby.com
 */
 
-require_once plugin_dir_path( __FILE__ ) . 'classes/class-dashboard.php';
-use lnb\Dashboard;
-$dashboard = Dashboard::get_instance( __FILE__ );
+// require_once plugin_dir_path( __FILE__ ) . 'classes/class-dashboard.php';
+// use lnb\Dashboard;
+// $dashboard = Dashboard::get_instance( __FILE__ );
 
 require 'recaptcha/lnb_recaptcha.php';
 require 'recaptcha/menu_page.php';
@@ -31,11 +31,12 @@ class LNB_White_Label {
 		add_action( 'wp_before_admin_bar_render', array( $this, 'remove_admin_bar_links' ) );
         add_action( 'admin_bar_menu', array( $this, 'add_admin_bar_links' ) ,25 );
         
-        add_action( 'login_footer', [ $this, 'login_footer'] );
+		add_action( 'login_footer', [ $this, 'login_footer'] );
+		add_action( 'admin_init', [$this, 'admin_init'], 99);
 
-		if( is_admin() ) {
-			$this->admin_init();
-		}
+		// if( is_admin() ) {
+		// 	$this->admin_init();
+		// }
 	}
 
 	function init_admin_styles() {
@@ -171,8 +172,12 @@ class LNB_White_Label {
 	}
 
 	function admin_init() {
-		require_once( plugin_dir_path( __FILE__ ) .'/updater/github-updater.php' );
-		new GitHubPluginUpdater( __FILE__, 'LeadsNearby', 'lnb-white-label' );
+		// require_once( plugin_dir_path( __FILE__ ) .'/updater/github-updater.php' );
+		// new GitHubPluginUpdater( __FILE__, 'LeadsNearby', 'lnb-white-label' );
+
+		if (class_exists('\lnb\core\GitHubPluginUpdater')) {
+			new \lnb\core\GitHubPluginUpdater(__FILE__, 'lnb-white-label');
+		}
 
 		add_action( 'admin_enqueue_scripts', array( $this, 'init_admin_styles' ) );
 		add_filter('admin_footer_text', array( $this, 'add_footer_text' ) );
