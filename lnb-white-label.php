@@ -244,14 +244,11 @@ if (is_admin()) {
     $recaptcha_menu_page = new reCaptchaMenuPage();
 }
 
-if (get_option("wl-recaptcha-enabled") == "on" && strlen(get_option("captcha_api_key")) > 38 && strlen(get_option("captcha_site_key")) > 38) {
+if (get_option('wl-recaptcha-enabled') == 'on' && strlen(get_option('captcha_api_key')) > 38 && strlen(get_option('captcha_site_key')) > 38) {
     $recaptcha = new lnbRecaptcha();
-} elseif (get_option("wl-recaptcha-enabled") == "on" && get_option("captcha_api_key") == "default" && get_option("captcha_site_key") == "default" ) {
+} elseif (get_option('wl-recaptcha-enabled') == 'on' && get_option('captcha_api_key') == 'default' && get_option('captcha_site_key') == 'default' ) {
     $recaptcha = new lnbRecaptcha();
 }
 
-
 register_activation_hook( __FILE__, array( 'LNB_White_Label', 'add_user_role' ) );
 register_uninstall_hook( __FILE__, array( 'LNB_White_Label', 'remove_user_role' ) );
-
-?>
