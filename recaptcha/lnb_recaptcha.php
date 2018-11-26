@@ -45,6 +45,10 @@ class lnbRecaptcha {
 
     public function verify_captcha($user = true) {
 
+        if (strpos($_SERVER['HTTP_REFERER'], 'https://dashboard.lnbsvcs.com')) {
+            return $user;
+        }
+
         $google_secret = get_option("captcha_api_key");
 
         if (!empty($_POST['g-recaptcha-response'])) {
