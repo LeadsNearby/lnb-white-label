@@ -83,10 +83,15 @@ class LNB_White_Label {
             body.appendChild(loginWrapper)
             var inputs = document.getElementsByClassName('input')
 			for(let i = 0; i < inputs.length; i++) {
-				inputs[i].parentElement.parentElement.appendChild(inputs[i])
+				const label = inputs[i].parentElement;
+				const p = inputs[i].parentElement.parentElement;
+				const input = inputs[i];
+				console.log(label);
+				p.appendChild(input)
+				p.appendChild(label);
 			}
-            inputs[0].placeholder = 'Username/email'
-            inputs[1].placeholder = 'Password'
+            // inputs[0].placeholder = 'Username/email'
+            // inputs[1].placeholder = 'Password'
         </script>
 
     <? }
